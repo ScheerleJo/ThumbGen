@@ -7,7 +7,6 @@ if (%varDate% == Fr){
     Sleep, 200
     SendInput, python thumbGen.py
     Send, {Enter}
-    Sleep, 500
     BlockInput, Off
 }
 ExitApp, 1
