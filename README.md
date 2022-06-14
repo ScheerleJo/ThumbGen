@@ -21,7 +21,8 @@ The GUI lets you create the Thumbnail for the upcoming Sunday service as well as
 
 To open the GUI, you execute the `Thumbnail Generator.ink`. If you want to use its full potential, you can download the .ics file as previously mentioned. The exact location for the calendar file doesn't matter as long the file is in the repository folder.
 
-## ToDo:
+## ToDo
+
 - [ ] AHK check if thumbnail already existing before opening ThumbGen
 
 ## Developer
