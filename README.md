@@ -19,7 +19,11 @@ Here is an example of how this looks:
 The application currently supports automatically providing the date and name of the upcoming Sunday using the downloadable .ics file provided by [www.kirchenjahr-evangelisch.de](https://www.kirchenjahr-evangelisch.de).
 The GUI lets you create the Thumbnail for the upcoming Sunday service as well as other events if you tick the Spezial-Checkbox.
 
-To open the GUI, you execute the `Thumbnail Generator.ink`. If you want to use its full potential, you can download the .ics file as previously mentioned. The exact location for the calendar file doesn't matter as long the file is in the repository folder.
+To open the GUI, you execute the `Thumbnail Generator.ink`. If you want to use its full potential, you can download the .ics file [here](https://www.kirchenjahr-evangelisch.de/ical-kalender-download.php). The exact location for the calendar file doesn't matter as long the file is in the repository folder.
+
+## ToDo
+
+- [ ] Look for possibility to fetch calendar data from the website directly instead of having to download the calendar
 
 ## Developer
 
