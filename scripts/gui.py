@@ -4,7 +4,6 @@ import thumbGen as tg
 dropValues = tg.listSundays()
 current = tg.nextSunday()
 imgSource = './cache/Thumbnail.png'
-startup = False
 
 #      Style and content of the GUI
 properties_column = [
