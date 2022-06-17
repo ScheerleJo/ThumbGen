@@ -3,7 +3,7 @@ import thumbGen as tg
 
 dropValues = tg.listSundays()
 current = tg.nextSunday()
-imgSource = './cache/Thumbnail.png'
+imgSource = './Images/cache/Thumbnail.png'
 
 #      Style and content of the GUI
 properties_column = [
@@ -44,11 +44,11 @@ layout= [
     ]
 ]
 
-window = sg.Window(title='Thumbnail-Generator',layout=layout, background_color='#282828', finalize=True, icon='./icon/icon.ico')
+window = sg.Window(title='Thumbnail-Generator',layout=layout, background_color='#282828', finalize=True, icon='./Images/icon.ico')
 
 #   Code after Startup to show next Sunday as img in cache
 date = current.split(' (')
-tg.modifyThumbnail([(date[1]).strip(')'), date[0].upper()], '', './cache/Thumbnail.png', False)
+tg.modifyThumbnail([(date[1]).strip(')'), date[0].upper()], '', './Images/cache/Thumbnail.png', False)
 window['-IMAGE-'].update(imgSource, subsample=3)
 
 window['-DATE-'].update(visible=False)

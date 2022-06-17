@@ -26,9 +26,9 @@ def updateThumbnail(values, show, sunday = None, lesson = None):
         sunday = [(date[1]).strip(')'), date[0].upper()]
     lesson = values['-LESSON-'].upper()
     if show == True:
-        path = './Thumbnail ' + sunday[0] + '.png'
+        path = './thumbnails/Thumbnail ' + sunday[0] + '.png'
     else:
-        path = './cache/Thumbnail.png'
+        path = './Images/cache/Thumbnail.png'
         
     fs1 = int(values['-SLIDER_ROW1-'])
     fs2 = int(values['-SLIDER_ROW2-'])
@@ -38,7 +38,7 @@ def updateThumbnail(values, show, sunday = None, lesson = None):
 def modifyThumbnail(sunday, lesson, path, show, fs1 = 90, fs2 = 90, fs3 = 90):
     nextDate = sunday[0]
     sunday = sunday[1]
-    image = Image.open("./thumbnail_raw.png")
+    image = Image.open("./Images/thumbnail_raw.png")
     draw = ImageDraw.Draw(image)
     font1 = ImageFont.truetype(fontFamily, fs1)
     font2 = ImageFont.truetype(fontFamily, fs2)
@@ -53,7 +53,7 @@ def modifyThumbnail(sunday, lesson, path, show, fs1 = 90, fs2 = 90, fs3 = 90):
     image.save(path)
     if show == True:
         print('Thumbnail was successfully generated')
-        os.startfile(os.getcwd())
+        os.startfile(os.getcwd() + '/thumbnails')
 
 
 
