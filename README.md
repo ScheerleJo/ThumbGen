@@ -12,7 +12,7 @@ The Thumbnail consists of 3 major parts:
   - biblical passage
 
 Here is an example of how this looks:
-![Example](Images/Thumbnail_example.png)
+![Example](images/Thumbnail_example.png)
 
 ## How to use
 
