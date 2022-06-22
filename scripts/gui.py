@@ -34,7 +34,7 @@ properties_column = [
 ]
 preview_column = [
     [sg.Text('Vorschau:', background_color='#282828')],
-    [sg.Image(source=imgSource, size=(640, 360),key='-IMAGE-', subsample=3)],
+    [sg.Image(size=(640, 360),key='-IMAGE-', subsample=3)],
 ]
 layout= [
     [

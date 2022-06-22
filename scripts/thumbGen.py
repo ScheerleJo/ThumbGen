@@ -20,6 +20,12 @@ def nextSunday():
     thumbnailDate = nextDate.strftime('%d.%m.%Y')
     return thumbnailName + ' (' + thumbnailDate + ')'
 
+def createVideoContent(date, lesson, preacher, theme, name):
+    url = 'https://www.bibleserver.com/LUT/' + lesson
+    title = 'Gottesdienst am ' + date + ' - ' + name
+    description = 'Livestream vom Gottesdienst am Sonntag, ' + date + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\nHomepage: https://www.gemeinde.hohenhaslach.elk-wue.de/\n\nZeltkirche: https://zusammenfinden-sachsenheim.de/'
+    return title, description
+
 def updateThumbnail(values, show, sunday = None, lesson = None):
     date = values['-DROPDOWN-'].split(' (')     # value consists of: name (date) ---> create array of [0] = date, [1] = name
     if sunday == None:
