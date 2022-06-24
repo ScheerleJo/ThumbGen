@@ -35,10 +35,16 @@ properties_column = [
 preview_column = [
     [sg.Text('Vorschau:', background_color='#282828')],
     [sg.Image(size=(640, 360),key='-IMAGE-', subsample=3)],
+    # [
+    #     sg.Text('Titel:', background_color='#282828'),
+    #     sg.In(default_text='', key='-TITLE-', )
+    # ],
+    # [sg.Text('Videobeschreibung:', background_color='#282828')],
+    # [sg.Multiline(default_text='', key='-DESCRIPTION-', size=(70, 10))]
 ]
 layout= [
     [
-        sg.Column(layout=properties_column, background_color='#282828', vertical_alignment='top'),
+        sg.Column(layout = properties_column, background_color='#282828', vertical_alignment='top'),
         sg.VSeparator(),
         sg.Column(layout = preview_column, background_color='#282828'),
     ]
@@ -68,15 +74,17 @@ while True:
         if values['-SPECIAL-'] == True:
             tg.updateThumbnail(sunday=[spDate, spName], values=values, show=True)
         tg.updateThumbnail(values, True)
-
     elif event == '-PREVIEW-' or event == '-DROPDOWN-':
         if values['-SPECIAL-'] == True:
             spDate = values['-SP_DATE-']
             spName = values['-SP_EVENT-'].upper()
-            tg.updateThumbnail(sunday=[spDate, spName], values=values, show=False)
+            tg.updateThumbnail(values, [spDate, spName], show = False)
         else:
             tg.updateThumbnail(values, False)
         window['-IMAGE-'].update(imgSource, subsample=3)
+        # content = tg.createVideoContent(values['-DROPDOWN-'], values['-LESSON-'])
+        # window['-TITLE-'].update(content[0])
+        # window['-DESCRIPTION-'].update(content[1])
 
     elif event == '-SPECIAL-':
         if values['-SPECIAL-'] == True:

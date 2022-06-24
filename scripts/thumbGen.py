@@ -10,6 +10,13 @@ fontSize2 = 90
 fontSize3 = 90
 fontFamily ='tahoma.ttf'
 
+def splitString(input:str, thumb:bool = False):
+    date = input.split(' (')     # value consists of: name (date) ---> create array of [0] = date, [1] = name
+    if thumb == True:
+        return (date[1]).strip(')'), date[0].upper()
+    else:
+        return (date[1]).strip(')'), date[0]
+
 def nextSunday():
     d = datetime.today()
     days_ahead = 6 - d.weekday()
@@ -20,28 +27,24 @@ def nextSunday():
     thumbnailDate = nextDate.strftime('%d.%m.%Y')
     return thumbnailName + ' (' + thumbnailDate + ')'
 
-def createVideoContent(date, lesson, preacher, theme, name):
+def createVideoContent(dropdownValue, lesson, preacher = '*PREDIGER*', theme = '*THEMA*'):
+    sunday = splitString(dropdownValue)
     url = 'https://www.bibleserver.com/LUT/' + lesson
-    title = 'Gottesdienst am ' + date + ' - ' + name
-    description = 'Livestream vom Gottesdienst am Sonntag, ' + date + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\nHomepage: https://www.gemeinde.hohenhaslach.elk-wue.de/\n\nZeltkirche: https://zusammenfinden-sachsenheim.de/'
+    title = 'Gottesdienst am ' + sunday[0] + ' - ' + sunday[1]
+    description = 'Livestream vom Gottesdienst am Sonntag, ' + sunday[0] + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\nHomepage: https://www.gemeinde.hohenhaslach.elk-wue.de/\n\nZeltkirche: https://zusammenfinden-sachsenheim.de/'
     return title, description
 
-def updateThumbnail(values, show, sunday = None, lesson = None):
-    date = values['-DROPDOWN-'].split(' (')     # value consists of: name (date) ---> create array of [0] = date, [1] = name
+def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = None):
     if sunday == None:
-        sunday = [(date[1]).strip(')'), date[0].upper()]
+        sunday = splitString(values['-DROPDOWN-'], True)
     lesson = values['-LESSON-'].upper()
-    if show == True:
-        path = './thumbnails/Thumbnail ' + sunday[0] + '.png'
-    else:
-        path = './Images/cache/Thumbnail.png'
-        
+    
     fs1 = int(values['-SLIDER_ROW1-'])
     fs2 = int(values['-SLIDER_ROW2-'])
     fs3 = int(values['-SLIDER_ROW3-'])
-    modifyThumbnail(sunday, lesson, path, show, fs1, fs2, fs3)
+    modifyThumbnail(sunday, lesson, show, fs1, fs2, fs3)
 
-def modifyThumbnail(sunday, lesson, path, show, fs1 = 90, fs2 = 90, fs3 = 90):
+def modifyThumbnail(sunday:tuple, lesson:str, show:bool, fs1:int = 90, fs2:int = 90, fs3:int = 90):
     nextDate = sunday[0]
     sunday = sunday[1]
     image = Image.open("./Images/thumbnail_raw.png")
@@ -56,11 +59,13 @@ def modifyThumbnail(sunday, lesson, path, show, fs1 = 90, fs2 = 90, fs3 = 90):
     draw.text((654, 761), lesson, (167, 22, 128), font=font3)
 
     #save Thumbnail
-    image.save(path)
     if show == True:
-        print('Thumbnail was successfully generated')
+        path = './thumbnails/Thumbnail ' + sunday[0] + '.png'
         os.startfile(os.getcwd() + '/thumbnails')
+    else:
+        path = './Images/cache/Thumbnail.png'
 
+    image.save(path)
 
 
 def getName(date):
