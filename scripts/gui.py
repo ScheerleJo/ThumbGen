@@ -51,12 +51,13 @@ date = current.split(' (')
 tg.modifyThumbnail([(date[1]).strip(')'), date[0].upper()], '', './Images/cache/Thumbnail.png', False)
 window['-IMAGE-'].update(imgSource, subsample=3)
 
-window['-DATE-'].update(visible=False)
-window['-SP_DATE-'].update(visible=False)
-window['-DATE_BT-'].update(visible=False)
-window['-DROPDOWN-'].update(visible=True)
-window['-SP_EVENT-'].update(visible=False)
+def visibleElements(visible:bool):
+    components = ['-DATE-','-SP_DATE-', '-SP_EVENT-', '-DATE_BT-']
+    window['-DROPDOWN-'].update(visible=(not visible))
+    for element in components:
+        window[element].update(visible=visible)
 
+visibleElements(False)
 #   Main-Loop
 while True:
     event, values = window.read()
@@ -79,16 +80,8 @@ while True:
 
     elif event == '-SPECIAL-':
         if values['-SPECIAL-'] == True:
-            window['-DATE-'].update(visible=True)
-            window['-SP_DATE-'].update(visible=True)
-            window['-DATE_BT-'].update(visible=True)
-            window['-DROPDOWN-'].update(visible=False)
-            window['-SP_EVENT-'].update(visible=True)
+            visibleElements(True)
         else:
-            window['-DATE-'].update(visible=False)
-            window['-SP_DATE-'].update(visible=False)
-            window['-DROPDOWN-'].update(visible=True)
-            window['-SP_EVENT-'].update(visible=False)
-            window['-DATE_BT-'].update(visible=False)
+            visibleElements(False)
 
 window.close()
