@@ -1,4 +1,4 @@
 *.png
 !thumbnail_raw.png
-!Thumbnail_example.png
+!thumbnail_example.png
 __pycache__
