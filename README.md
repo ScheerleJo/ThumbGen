@@ -24,7 +24,7 @@ If you want to use its full potential, you can download the .ics file [here](htt
 ## ToDo
 
 - [ ] Look for possibility to fetch calendar data from the website directly instead of having to download the calendar
-- [ ] Create Tabs for Thumbnail and Video-Text-Content like  title and Video-description.
+- [ ] Create Logic for Title and Video-Description.
 
 ## Developer
 
