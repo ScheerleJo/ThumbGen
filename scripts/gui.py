@@ -53,8 +53,7 @@ layout= [
 window = sg.Window(title='Thumbnail-Generator',layout=layout, background_color='#282828', finalize=True, icon='./Images/icon.ico')
 
 #   Code after Startup to show next Sunday as img in cache
-date = current.split(' (')
-tg.modifyThumbnail([(date[1]).strip(')'), date[0].upper()], '', './Images/cache/Thumbnail.png', False)
+tg.modifyThumbnail(tg.splitString(current))
 window['-IMAGE-'].update(imgSource, subsample=3)
 
 def visibleElements(visible:bool):

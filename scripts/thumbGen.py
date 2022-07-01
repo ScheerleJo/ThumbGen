@@ -10,12 +10,9 @@ fontSize2 = 90
 fontSize3 = 90
 fontFamily ='tahoma.ttf'
 
-def splitString(input:str, thumb:bool = False):
+def splitString(input:str):
     date = input.split(' (')     # value consists of: name (date) ---> create array of [0] = date, [1] = name
-    if thumb == True:
-        return (date[1]).strip(')'), date[0].upper()
-    else:
-        return (date[1]).strip(')'), date[0]
+    return (date[1]).strip(')'), date[0]
 
 def nextSunday():
     d = datetime.today()
@@ -36,7 +33,7 @@ def createVideoContent(dropdownValue, lesson, preacher = '*PREDIGER*', theme = '
 
 def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = None):
     if sunday == None:
-        sunday = splitString(values['-DROPDOWN-'], True)
+        sunday = splitString(values['-DROPDOWN-'])
     lesson = values['-LESSON-'].upper()
     
     fs1 = int(values['-SLIDER_ROW1-'])
@@ -44,9 +41,9 @@ def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = N
     fs3 = int(values['-SLIDER_ROW3-'])
     modifyThumbnail(sunday, lesson, show, fs1, fs2, fs3)
 
-def modifyThumbnail(sunday:tuple, lesson:str, show:bool, fs1:int = 90, fs2:int = 90, fs3:int = 90):
+def modifyThumbnail(sunday:tuple, lesson:str = '', show:bool = False, fs1:int = 90, fs2:int = 90, fs3:int = 90):
     nextDate = sunday[0]
-    sunday = sunday[1]
+    sunday = sunday[1].upper()
     image = Image.open("./Images/thumbnail_raw.png")
     draw = ImageDraw.Draw(image)
     font1 = ImageFont.truetype(fontFamily, fs1)
@@ -60,7 +57,7 @@ def modifyThumbnail(sunday:tuple, lesson:str, show:bool, fs1:int = 90, fs2:int =
 
     #save Thumbnail
     if show == True:
-        path = './thumbnails/Thumbnail ' + sunday[0] + '.png'
+        path = './thumbnails/Thumbnail ' + nextDate + '.png'
         os.startfile(os.getcwd() + '/thumbnails')
     else:
         path = './Images/cache/Thumbnail.png'
