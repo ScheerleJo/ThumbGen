@@ -24,14 +24,23 @@ def nextSunday():
     thumbnailDate = nextDate.strftime('%d.%m.%Y')
     return thumbnailName + ' (' + thumbnailDate + ')'
 
-def createVideoContent(dropdownValue, lesson, preacher = '*PREDIGER*', theme = '*THEMA*'):
-    sunday = splitString(dropdownValue)
+def createVideoContent(values:tuple, special:bool = False):
+    """Create the videotitle and description for standard livestreams"""
+    dropdownValue=values['-DROPDOWN-']
+    lesson=values['-LESSON-']
+    preacher=values['-PREACHER-']
+    theme=values['-THEME-']
+    if(special == False):
+        sunday = splitString(dropdownValue)
+    else :
+        sunday = {values['-SP_DATE-'], values['-SP_EVENT-']}
     url = 'https://www.bibleserver.com/LUT/' + lesson
     title = 'Gottesdienst am ' + sunday[0] + ' - ' + sunday[1]
     description = 'Livestream vom Gottesdienst am Sonntag, ' + sunday[0] + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\nHomepage: https://www.gemeinde.hohenhaslach.elk-wue.de/\n\nZeltkirche: https://zusammenfinden-sachsenheim.de/'
     return title, description
 
 def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = None):
+    """Gahter all required information to create a thumbnail"""
     if sunday == None:
         sunday = splitString(values['-DROPDOWN-'])
     lesson = values['-LESSON-'].upper()
@@ -42,6 +51,7 @@ def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = N
     modifyThumbnail(sunday, lesson, show, fs1, fs2, fs3)
 
 def modifyThumbnail(sunday:tuple, lesson:str = '', show:bool = False, fs1:int = 90, fs2:int = 90, fs3:int = 90):
+    """Manipulate the template to create a new thumbnail for either cache or the end-use"""
     nextDate = sunday[0]
     sunday = sunday[1].upper()
     image = Image.open("./Images/thumbnail_raw.png")
@@ -79,13 +89,16 @@ def getName(date):
         g.close()
     error.message('No matching result was found! Check if the Calendar is up to date.')
 
-def listSundays():
+def listSundays() -> list:
+    """Create a list for the Dropdown-menu in the Gui."""
+    # For this it uses all the .ics files found by getCalFiles()
     sundays = []
     for items in getCalFiles():
         g = open(items,'rb')
         gcal = Calendar.from_ical(g.read())
         for component in gcal.walk():
             if component.name == "VEVENT":
+                # Generate a list wuth the events in the calendar with name (here: summary) and date (here: dtstart)
                 calDate= str(component.decoded('dtstart')).split('-')
                 date = calDate[2] + '.' + calDate[1] + '.' + calDate[0]
                 value = component.get('summary') + " (" + date + ')'
@@ -93,15 +106,16 @@ def listSundays():
         g.close()
     return sundays
 
-def getCalFiles():
-    f = []
+def getCalFiles() -> list:
+    """Search the current directory for .ics files"""
     files = []
+    # os.walk to get all objects in the directory
     for (dirpath, dirnames, filenames) in os.walk('./'):
-        f.extend(filenames)
+        files.extend(filenames)
         break
-
-    for item in f:
-        if str(item).endswith(('.ics')):
-            if item not in files:
-                files.append(item)
+    for item in files:
+        if str(item).endswith(('.ics')) == False:
+            files.remove(item)
+    # For some reason the .endswith Function doesn't remove the Readme, so it has to be done seperatly
+    files.remove('README.md')
     return files
