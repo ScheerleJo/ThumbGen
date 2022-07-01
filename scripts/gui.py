@@ -1,11 +1,12 @@
-from ast import Return
 import PySimpleGUI as sg
 import thumbGen as tg
+import clipboard
+
 
 dropValues = tg.listSundays()
 current = tg.nextSunday()
 imgSource = './Images/cache/Thumbnail.png'
-
+activeTab = '-THUMBNAIL-'
 
 def visibleElements(visible:bool):
     """Handle visibility for the 'special Event' functionality"""
@@ -21,8 +22,10 @@ def synconizeTabs():
     """Handle the syncronisation between the two tabs for common elements"""
     components = [ '-DROPDOWN', '-LESSON', '-SP_DATE', '-SP_EVENT']
     for element in components:
-        window[element + '-'].update(value=values[element + '_CONTENT-'])
-        window[element + '_CONTENT-'].update(value=values[element + '-'])
+        if activeTab == '-THUMBNAIL-':
+            window[element + '_CONTENT-'].update(value=values[element + '-'])
+        else:
+            window[element + '-'].update(value=values[element + '_CONTENT-'])
 
 def createContent():
     if values['-SPECIAL-'] == True:
@@ -92,11 +95,13 @@ content_properties_layout = [
 ]
 content_preview_layout = [
     [
-        sg.Text('Titel:', background_color='#303030'),
+        sg.Text('Titel: ', background_color='#303030'),
         sg.In(default_text='', key='-TITLE-', size=(66, 1))
     ],
+    [sg.Button('In die Zwischenablage kopieren', key='-COPY_TITLE-', size=(63, ), button_color='#640000')],
     [sg.Text('Videobeschreibung:', background_color='#303030')],
-    [sg.Multiline(default_text='', key='-DESCRIPTION-', size=(70, 10), sbar_background_color='#640000')]
+    [sg.Multiline(default_text='', key='-DESCRIPTION-', size=(70, 10), sbar_background_color='#640000')],
+    [sg.Button('In die Zwischenablage kopieren', key='-COPY_DESCRIPTION-', size=(63, 2), button_color='#640000')]
 ]
 layout= [
     [
@@ -108,16 +113,16 @@ layout= [
                         sg.VSeparator(),
                             sg.Column(layout = preview_column, background_color='#303030'),
                     ]
-                ], background_color='#303030'),
+                ], background_color='#303030', key='-THUMBNAIL-'),
                 sg.Tab('Video Content', [
                     [
                         sg.Column(layout=content_properties_layout, background_color='#303030', vertical_alignment='top'),
                         sg.VSeperator(),
                         sg.Column(layout=content_preview_layout, background_color='#303030', vertical_alignment='top'),
                     ]
-                ], background_color='#303030')
+                ], background_color='#303030', key='-CONTENT-')
             ]
-            ], key='-group1-', tab_location='top', selected_title_color='#640000', background_color='#282828', border_width=1, tab_background_color='#444444', selected_background_color='#444444', title_color='#FFFFFF')
+            ], key='-GROUP-', tab_location='top', selected_title_color='#640000', background_color='#282828', border_width=1, tab_background_color='#444444', selected_background_color='#444444', title_color='#FFFFFF', enable_events=True)
     ]
 ]
 # endregion
@@ -133,14 +138,13 @@ visibleElements(False)
 #   Main-Loop
 while True:
     event, values = window.read()
-
-    spDate = values['-SP_DATE-']
-    spName = values['-SP_EVENT-']
-    
     synconizeTabs()
 
     if event == sg.WIN_CLOSED:
         break
+
+    spDate = values['-SP_DATE-']
+    spName = values['-SP_EVENT-']
 
     match event:
         case '-CREATE-':
@@ -157,6 +161,19 @@ while True:
         case '-CREATE_CONTENT-':
             createContent()
 
+        case '-GROUP-':
+            activeTab = values['-GROUP-']
+            if values['-SPECIAL-'] == True:
+                tg.updateThumbnail(values, [spDate, spName], show = False)
+            else:
+                tg.updateThumbnail(values, False)
+            window['-IMAGE-'].update(imgSource, subsample=3)
+
+        case '-COPY_DESCRIPTION-':
+            clipboard.copy(values['-DESCRIPTION-'])
+
+        case '-COPY_TITLE-':
+            clipboard.copy(values['-TITLE-'])
 
         case '-DROPDOWN-':
             tg.updateThumbnail(values, False)

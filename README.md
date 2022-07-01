@@ -24,8 +24,6 @@ If you want to use its full potential, you can download the .ics file [here](htt
 ## ToDo
 
 - [ ] Look for possibility to fetch calendar data from the website directly instead of having to download the calendar
-- [x] Create Logic for Title and Video-Description.
-- [ ] fix sync Bug with Dropdown-Menu
 
 ## Developer
 

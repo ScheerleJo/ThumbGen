@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 from icalendar import Calendar
 from datetime import datetime, timedelta
 import os
-import error
+import message
 
 fontSize1 = 90
 fontSize2 = 90
@@ -87,7 +87,7 @@ def getName(date):
                     g.close()
                     return name
         g.close()
-    error.message('No matching result was found! Check if the Calendar is up to date.')
+    message.error('No matching result was found! Check if the Calendar is up to date.')
 
 def listSundays() -> list:
     """Create a list for the Dropdown-menu in the Gui."""
