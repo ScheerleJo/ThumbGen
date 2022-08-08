@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 from PIL import Image, ImageDraw, ImageFont
 from icalendar import Calendar
 from datetime import datetime, timedelta
@@ -35,7 +34,7 @@ def createVideoContent(values:tuple, special:bool = False):
     else :
         sunday = {values['-SP_DATE-'], values['-SP_EVENT-']}
     url = 'https://www.bibleserver.com/LUT/' + lesson
-    title = 'Gottesdienst am ' + sunday[0] + ' - ' + sunday[1]
+    title = 'Gottesdienst am ' + sunday[0] + ' - ' + theme
     description = 'Livestream vom Gottesdienst am Sonntag, ' + sunday[0] + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\nHomepage: https://www.gemeinde.hohenhaslach.elk-wue.de/\n\nZeltkirche: https://zusammenfinden-sachsenheim.de/'
     return title, description
 
@@ -93,7 +92,8 @@ def listSundays() -> list:
     """Create a list for the Dropdown-menu in the Gui."""
     # For this it uses all the .ics files found by getCalFiles()
     sundays = []
-    for items in getCalFiles():
+    calFiles = getCalFiles()
+    for items in calFiles:
         g = open(items,'rb')
         gcal = Calendar.from_ical(g.read())
         for component in gcal.walk():
@@ -109,13 +109,12 @@ def listSundays() -> list:
 def getCalFiles() -> list:
     """Search the current directory for .ics files"""
     files = []
+    cal = []
     # os.walk to get all objects in the directory
     for (dirpath, dirnames, filenames) in os.walk('./'):
         files.extend(filenames)
         break
     for item in files:
-        if str(item).endswith(('.ics')) == False:
-            files.remove(item)
-    # For some reason the .endswith Function doesn't remove the Readme, so it has to be done seperatly
-    files.remove('README.md')
-    return files
+        if str(item).endswith(('.ics')) == True:
+            cal.append(item)
+    return cal

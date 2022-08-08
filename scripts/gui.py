@@ -138,10 +138,10 @@ visibleElements(False)
 #   Main-Loop
 while True:
     event, values = window.read()
-    synconizeTabs()
-
     if event == sg.WIN_CLOSED:
         break
+
+    synconizeTabs()
 
     spDate = values['-SP_DATE-']
     spName = values['-SP_EVENT-']
