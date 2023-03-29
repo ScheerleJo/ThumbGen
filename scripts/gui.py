@@ -8,7 +8,7 @@ current = tg.nextSunday()
 imgSource = './Images/cache/Thumbnail.png'
 activeTab = '-THUMBNAIL-'
 
-def visibleElements(visible:bool):
+def visibleElements(visible:bool, dropdownvalue = ""):
     """Handle visibility for the 'special Event' functionality"""
     components = ['-DATE-','-SP_DATE-', '-SP_EVENT-', '-DATE_BT-', '-DATE_CONTENT-','-SP_DATE_CONTENT-', '-SP_EVENT_CONTENT-', '-DATE_BT_CONTENT-']
     window['-DROPDOWN-'].update(visible=(not visible))
@@ -17,6 +17,13 @@ def visibleElements(visible:bool):
         window[element].update(visible=visible)
     window['-SPECIAL-'].update(value=visible)
     window['-SPECIAL_CONTENT-'].update(value=visible)
+
+    if visible == True:
+        currentEvent = tg.splitString(dropdownvalue)
+        window['-SP_DATE-'].update(value=(currentEvent[0]))
+        window['-SP_DATE_CONTENT-'].update(value=(currentEvent[0]))
+        window['-SP_EVENT-'].update(value=(currentEvent[1]))
+        window['-SP_EVENT_CONTENT-'].update(value=(currentEvent[1]))    
 
 def synconizeTabs():
     """Handle the syncronisation between the two tabs for common elements"""
@@ -36,7 +43,7 @@ def createContent():
     window['-DESCRIPTION-'].update(value=content[1])
 
 # region Style and content of the GUI
-properties_column = [
+thumbnail_properties_column = [
     [sg.Text('Optionen', background_color='#303030')],
     [sg.Checkbox('Spezial', default=False,background_color='#303030', key='-SPECIAL-', enable_events=True)],
     [
@@ -62,7 +69,7 @@ properties_column = [
     [sg.Button('Vorschau', key='-PREVIEW-', size=(38, 1),button_color='#640000')],
     [sg.Button('Erstellen', key='-CREATE-', size=(38, 1),button_color='#640000')],
 ]
-preview_column = [
+thumbnail_preview_column = [
     [sg.Text('Vorschau:', background_color='#303030')],
     [sg.Image(size=(640, 360),key='-IMAGE-', subsample=3)],
 ]
@@ -109,9 +116,9 @@ layout= [
             [
                 sg.Tab('Thumbnail', [
                     [
-                        sg.Column(layout = properties_column, background_color='#303030', vertical_alignment='top'),
+                        sg.Column(layout = thumbnail_properties_column, background_color='#303030', vertical_alignment='top'),
                         sg.VSeparator(),
-                            sg.Column(layout = preview_column, background_color='#303030'),
+                            sg.Column(layout = thumbnail_preview_column, background_color='#303030'),
                     ]
                 ], background_color='#303030', key='-THUMBNAIL-'),
                 sg.Tab('Video Content', [
@@ -149,13 +156,14 @@ while True:
     match event:
         case '-CREATE-':
             if values['-SPECIAL-'] == True:
-                tg.updateThumbnail(sunday=[spDate, spName], values=values, show=True)
-            tg.updateThumbnail(values, True)
+                tg.gatherThumbnailInfo(sunday=[spDate, spName], values=values, show=True)
+            else:
+                tg.gatherThumbnailInfo(values, True)
         case '-PREVIEW-':
             if values['-SPECIAL-'] == True:
-                tg.updateThumbnail(values, [spDate, spName], show = False)
+                tg.gatherThumbnailInfo(values=values, sunday=[spDate, spName], show = False)
             else:
-                tg.updateThumbnail(values, False)
+                tg.gatherThumbnailInfo(values, False)
             window['-IMAGE-'].update(imgSource, subsample=3)
 
         case '-CREATE_CONTENT-':
@@ -164,9 +172,9 @@ while True:
         case '-GROUP-':
             activeTab = values['-GROUP-']
             if values['-SPECIAL-'] == True:
-                tg.updateThumbnail(values, [spDate, spName], show = False)
+                tg.gatherThumbnailInfo(values=values, sunday=[spDate, spName], show = False)
             else:
-                tg.updateThumbnail(values, False)
+                tg.gatherThumbnailInfo(values, False)
             window['-IMAGE-'].update(imgSource, subsample=3)
 
         case '-COPY_DESCRIPTION-':
@@ -176,17 +184,24 @@ while True:
             clipboard.copy(values['-TITLE-'])
 
         case '-DROPDOWN-':
-            tg.updateThumbnail(values, False)
+            tg.gatherThumbnailInfo(values, False)
             window['-IMAGE-'].update(imgSource, subsample=3)
 
         case '-SPECIAL-':
             if values['-SPECIAL-'] == True:
-                visibleElements(True)
+                if activeTab == '-THUMBNAIL-':
+                    visibleElements(True, values['-DROPDOWN-'])
+                else:
+                    visibleElements(True, values['-DROPDOWN_CONTENT-'])
             else:
                 visibleElements(False)
+                
         case '-SPECIAL_CONTENT-':
             if values['-SPECIAL_CONTENT-'] == True:
-                visibleElements(True)
+                if activeTab == '-THUMBNAIL-':
+                    visibleElements(True, values['-DROPDOWN-'])
+                else:
+                    visibleElements(True, values['-DROPDOWN_CONTENT-'])
             else:
                 visibleElements(False)
 

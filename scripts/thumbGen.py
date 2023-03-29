@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 from icalendar import Calendar
 from datetime import datetime, timedelta
 import os
-import message
+from tkinter import messagebox
 
 fontSize1 = 90
 fontSize2 = 90
@@ -16,7 +16,7 @@ def splitString(input:str):
 def nextSunday():
     d = datetime.today()
     days_ahead = 6 - d.weekday()
-    if days_ahead <= 0: # Target day already happened this week
+    if days_ahead < 0: # Target day already happened this week
         days_ahead += 7
     nextDate = d + timedelta(days_ahead)
     thumbnailName = getName((nextDate.strftime('%Y-%m-%d')))
@@ -29,16 +29,18 @@ def createVideoContent(values:tuple, special:bool = False):
     lesson=values['-LESSON-']
     preacher=values['-PREACHER-']
     theme=values['-THEME-']
+
     if(special == False):
         sunday = splitString(dropdownValue)
     else :
-        sunday = {values['-SP_DATE-'], values['-SP_EVENT-']}
+        sunday = [values['-SP_DATE-'], values['-SP_EVENT-']]
+
     url = 'https://www.bibleserver.com/LUT/' + lesson
-    title = 'Gottesdienst am ' + sunday[0] + ' - ' + theme
+    title = theme + ' - ' + 'Gottesdienst am ' + sunday[0]
     description = 'Livestream vom Gottesdienst am Sonntag, ' + sunday[0] + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\nHomepage: https://www.gemeinde.hohenhaslach.elk-wue.de/\n\nZeltkirche: https://zusammenfinden-sachsenheim.de/'
     return title, description
 
-def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = None):
+def gatherThumbnailInfo(values:tuple, show:bool, sunday:tuple = None, lesson:str = None):
     """Gahter all required information to create a thumbnail"""
     if sunday == None:
         sunday = splitString(values['-DROPDOWN-'])
@@ -51,6 +53,7 @@ def updateThumbnail(values:tuple, show:bool, sunday:tuple = None, lesson:str = N
 
 def modifyThumbnail(sunday:tuple, lesson:str = '', show:bool = False, fs1:int = 90, fs2:int = 90, fs3:int = 90):
     """Manipulate the template to create a new thumbnail for either cache or the end-use"""
+        
     nextDate = sunday[0]
     sunday = sunday[1].upper()
     image = Image.open("./Images/thumbnail_raw.png")
@@ -86,7 +89,7 @@ def getName(date):
                     g.close()
                     return name
         g.close()
-    message.error('No matching result was found! Check if the Calendar is up to date.')
+    messagebox.showerror('Thumbnail-Generator', 'No matching result was found! Check if the Calendar is up to date.')
 
 def listSundays() -> list:
     """Create a list for the Dropdown-menu in the Gui."""
@@ -109,12 +112,22 @@ def listSundays() -> list:
 def getCalFiles() -> list:
     """Search the current directory for .ics files"""
     files = []
-    cal = []
     # os.walk to get all objects in the directory
     for (dirpath, dirnames, filenames) in os.walk('./'):
         files.extend(filenames)
         break
-    for item in files:
-        if str(item).endswith(('.ics')) == True:
-            cal.append(item)
-    return cal
+
+    length:int = len(files) - 1
+    i:int = 0
+    lastElement = files[length]
+
+    while i < length:
+        item = files[i]
+        if str(item).endswith(('.ics')) == False:
+            files.remove(item)
+        else:
+            i = i + 1
+
+        if item == lastElement:
+            break
+    return files
