@@ -8,35 +8,44 @@ dropValues = ical.listSundays()
 current = tg.nextSunday()
 imgSource = 'C:/Windows/Temp/TumbGen_CacheData.png'
 
-def visibleElements(visible:bool, dropdownvalue = ""):
+def visibleSpecialElements(visible:bool, dropdownvalue = ""):
     """Handle visibility for the 'special Event' functionality"""
     components = ['-DATE-','-SP_DATE-', '-SP_EVENT-', '-DATE_BT-']
-    window['-DROPDOWN-'].update(visible=(not visible))
     for element in components:
         window[element].update(visible=visible)
+
     window['-SPECIAL-'].update(value=visible)
+    window['-DROPDOWN-'].update(visible=(not visible))
 
     if visible == True:
         currentEvent = tg.splitString(dropdownvalue)
         window['-SP_DATE-'].update(value=(currentEvent[0]))
         window['-SP_EVENT-'].update(value=(currentEvent[1]))
 
-def createContent():
-    content = tg.createVideoContent(values)
+def createContent(saveThumbnail:bool):
+    """Create Thumbnail, Title and Videodescription"""
+
+    tg.gatherThumbnailInfo(saveThumbnail)
+
+    content = tg.createVideoContent()
     window['-TITLE-'].update(value=content[0])
     window['-DESCRIPTION-'].update(value=content[1])
 
 def readWordFile(initial:bool = False):
     #For Lesson and Theme:
-    combinedData = rw.getContentInTable(values, 2, "Predigt", current=initial)
+    combinedData = rw.getContentInTable(2, "Predigt", current=initial)
     if combinedData != None:
         lessonData = combinedData.splitlines()
         window['-LESSON-'].update(value=lessonData[0])
         window['-THEME-'].update(value=lessonData[1])
 
     #For Preacher:
-    preacherData = rw.getContentInTable(values, 1, "Prediger", current=initial)
+    preacherData = rw.getContentInTable(1, "Prediger", current=initial)
     window['-PREACHER-'].update(value=preacherData)
+
+def copyData(content:str):
+    clipboard.setData(content)
+    window['-SUCC_COPY-'].update(visible=(clipboard.checkData(content)))
 
 # region Style and content of the GUI
 thumbnail_properties_column = [
@@ -105,15 +114,20 @@ layout= [
 # endregion
 
 window = sg.Window(title='Thumbnail-Generator',layout=layout, background_color='#303030', finalize=True, icon='./Images/icon.ico')
-visibleElements(False)
-window['-SUCC_COPY-'].update(visible=False)
-event, values = window.read(timeout=50)
 
-#   Code after Startup to show next Sunday as img in cache
+# Code after Startup to show next Sunday as img in cache
+visibleSpecialElements(False)
+window['-SUCC_COPY-'].update(visible=False)
+
+event, values = window.read(timeout=50)
+tg.setValues(values)
 readWordFile(True)
+    # Short Timeout for the script to be able to load the data given from the .ics and .docx files
 event, values = window.read(timeout=100)
-createContent()
-tg.gatherThumbnailInfo(values, False)
+    # Create the Thumbnail and Content (Title and Videodescription) initially to preview it and check for errors in the data
+    # tg.setValues() needs to be set twice because the values change after readWord file
+tg.setValues(values)
+createContent(False)
 window['-IMAGE-'].update(source=imgSource, subsample=3)
 
 
@@ -123,41 +137,30 @@ while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
-
-    spDate = values['-SP_DATE-']
-    spName = values['-SP_EVENT-']
     window['-SUCC_COPY-'].update(visible=False)
 
     match event:
         case '-CREATE-':
-            createContent()
-            if values['-SPECIAL-'] == True:
-                tg.gatherThumbnailInfo(values, True)
-            else:
-                tg.gatherThumbnailInfo(values, True)
+            tg.setValues(values)
+            createContent(True)
+
         case '-PREVIEW-':
-            createContent()
-            if values['-SPECIAL-'] == True:
-                tg.gatherThumbnailInfo(values, False)
-            else:
-                tg.gatherThumbnailInfo(values, False)
+            tg.setValues(values)
+            createContent(False)
             window['-IMAGE-'].update(imgSource, subsample=3)
 
-        case '-COPY_DESCRIPTION-':
-            clipboard.setData(values['-DESCRIPTION-'])
-            window['-SUCC_COPY-'].update(visible=clipboard.checkData(values['-DESCRIPTION-']))
-            
-
-        case '-COPY_TITLE-':
-            clipboard.setData(values['-TITLE-'])
-            window['-SUCC_COPY-'].update(visible=(clipboard.checkData(values['-TITLE-'])))
-
-
         case '-DROPDOWN-':
-            tg.gatherThumbnailInfo(values, False)
+            tg.setValues(values)
+            tg.gatherThumbnailInfo(False)
             window['-IMAGE-'].update(imgSource, subsample=3)
 
         case '-SPECIAL-':
-                visibleElements(values['-SPECIAL-'], values['-DROPDOWN-'])
+            visibleSpecialElements(values['-SPECIAL-'], values['-DROPDOWN-'])
+
+        case '-COPY_DESCRIPTION-':
+            copyData(values['-DESCRIPTION-'])
+
+        case '-COPY_TITLE-':
+            copyData(values['-TITLE-'])
 
 window.close()

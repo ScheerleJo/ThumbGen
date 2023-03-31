@@ -4,10 +4,15 @@ import ical_utility as ical
 import os
 from tkinter import messagebox
 
-fontSize1 = 90
-fontSize2 = 90
-fontSize3 = 90
-fontFamily ='tahoma.ttf'
+fontSize1:int = 90
+fontSize2:int = 90
+fontSize3:int = 90
+fontFamily:str ='tahoma.ttf'
+
+values: tuple = []
+
+def setValues(guiValues:tuple):
+    values = guiValues
 
 def splitString(input:str):
     date = input.split(' (')     # value consists of: name (date) ---> create array of [0] = date, [1] = name
@@ -23,19 +28,19 @@ def nextSunday():
     thumbnailDate = nextDate.strftime('%d.%m.%Y')
     return thumbnailName + ' (' + thumbnailDate + ')'
 
-def checkForSpecialEvent(values):
+def checkForSpecialEvent():
     if(values['-SPECIAL-'] == False):
         sunday = splitString(values['-DROPDOWN-'])
     else :
         sunday = [values['-SP_DATE-'], values['-SP_EVENT-']]
     return sunday
 
-def createVideoContent(values):
+def createVideoContent():
     """Create the videotitle and description for standard livestreams"""
     lesson=values['-LESSON-']
     preacher=values['-PREACHER-']
     theme=values['-THEME-']
-
+    # dropdown | spdate & spevent, special, lesson, preacher, theme 
     sunday = checkForSpecialEvent(values)
 
     url = 'https://www.bibleserver.com/LUT/' + lesson
@@ -43,7 +48,7 @@ def createVideoContent(values):
     description = 'Livestream vom Gottesdienst am Sonntag, ' + sunday[0] + ' aus der Kirche der evangelischen Kirchengemeinde Hohenhaslach.\nPrediger ist ' + preacher + ', der zum Thema "' + theme + '" spricht.\nDen Bibeltext ' + lesson +' zum nachlesen gibt es hier: ' + url + '\n\nVielen Dank an alle, die mitgeholfen haben, dass dieser Gottesdienst stattfinden kann!\n\n'
     return title, description
 
-def gatherThumbnailInfo(values:tuple, saveThumbnail:bool):
+def gatherThumbnailInfo(saveThumbnail:bool):
     """Gahter all required information to create a thumbnail"""
     sunday = checkForSpecialEvent(values)
 

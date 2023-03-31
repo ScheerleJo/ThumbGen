@@ -1,11 +1,11 @@
 import docx
 import os
 from datetime import datetime, timedelta
-from tkinter import messagebox
+# from tkinter import messagebox
 import thumb_gen as tg
-import json_utility as json
+# import json_utility as json
 
-def createDateString(current:bool = False, values:tuple = []) -> str:
+def createDateString(current:bool = False) -> str:
     '''Create the DateString which is included in every service schedule to fit the previously selected Date/Event'''
     dateString = ''
     if current:
@@ -18,7 +18,7 @@ def createDateString(current:bool = False, values:tuple = []) -> str:
         dateString = nextDate.strftime('%Y%m%d').lstrip('2')
 
     else:
-        selectedDateString = tg.checkForSpecialEvent(values)
+        selectedDateString = tg.checkForSpecialEvent()
         selectedDate = datetime.strptime(selectedDateString[0], '%d.%m.%Y')
         print(selectedDate.strftime('%Y%m%d').lstrip('2'))
 
@@ -51,24 +51,24 @@ def getWordFiles() -> list:
     # messagebox.showerror('Thumbnail-Generator', 'Es wurden keine Dateien mit Endung .docx gefunden!')
     # return FileNotFoundError('No .docx Files found in the saved path: ' + json.getPath('docxLocation'))
 
-def currentWordFile(values:tuple, currentService:bool = False) -> str | None:
+def currentWordFile(currentService:bool = False) -> str | None:
     '''Get the suitable Word-file for the next service'''
 
     wordFiles = getWordFiles()
     currentFile:str = ''
 
     for item in wordFiles:
-        if createDateString(current=currentService, values=values) in item:
+        if createDateString(current=currentService) in item:
             currentFile = item
             return currentFile
     return None
     # messagebox.showerror('Thumbnail-Generator', 'Es gibt keinen Gottesdienstablauf im aktuellen Verzeichnis für den ausgewählten Gottesdienst!')
     # return FileNotFoundError('Shedule for the selected service could not be found!')
 
-def getContentInTable(values:tuple, tableIndex:int, keyword:str, file:str = '', current:bool = False) -> str:
+def getContentInTable(tableIndex:int, keyword:str, file:str = '', current:bool = False) -> str:
 
     if file == '':
-        file = currentWordFile(currentService=current, values=values)
+        file = currentWordFile(currentService=current)
     doc = docx.Document(file)
     maxIndex= len(doc.tables)
     if maxIndex <= tableIndex:
