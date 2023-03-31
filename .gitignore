@@ -2,3 +2,4 @@
 !thumbnail_raw.png
 !thumbnail_example.png
 __pycache__
+*.docx

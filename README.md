@@ -21,9 +21,16 @@ The GUI lets you create the Thumbnail for the upcoming Sunday service as well as
 
 If you want to use its full potential, you can download the .ics file [here](https://www.kirchenjahr-evangelisch.de/ical-kalender-download.php). The exact location for the calendar file doesn't matter as long the file is in the repository folder.
 
+With a new, still in development, feature the program is also able to get the information it needs from a word file in the current working directory. This simplifies the workflow a lot, because you only have to check if the given data is correct.
+
 ## ToDo
 
 - [ ] Look for possibility to fetch calendar data from the website directly instead of having to download the calendar
+- [ ] Do proper error handling with messageboxes and Logs or something like that
+- [ ] For now File paths are hardcoded in the programm. Make changing them dynamic (filelocations.json)
+- [ ] Figure out a way to get servicesschedules via Mail or ChurchTools instead of downloading manually
+- [ ] Create Livestreams by the click of a button
+- [ ] For some uploads we use different Backgrounds in the Thumbnails. Find a way to change the background of the thumbnail.
 
 ## Developer
 
