@@ -24,7 +24,6 @@ def visibleSpecialElements(visible:bool, dropdownvalue = ""):
 
 def createContent(saveThumbnail:bool):
     """Create Thumbnail, Title and Videodescription"""
-
     tg.gatherThumbnailInfo(saveThumbnail)
 
     content = tg.createVideoContent()

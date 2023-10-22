@@ -30,18 +30,17 @@ def nextSunday():
 
 def checkForSpecialEvent():
     if(values['-SPECIAL-'] == False):
-        sunday = splitString(values['-DROPDOWN-'])
+        return splitString(values['-DROPDOWN-'])
     else :
-        sunday = [values['-SP_DATE-'], values['-SP_EVENT-']]
-    return sunday
+        return [values['-SP_DATE-'], values['-SP_EVENT-']]
+
 
 def createVideoContent():
     """Create the videotitle and description for standard livestreams"""
     lesson=values['-LESSON-']
     preacher=values['-PREACHER-']
     theme=values['-THEME-']
-    # dropdown | spdate & spevent, special, lesson, preacher, theme 
-    sunday = checkForSpecialEvent(values)
+    sunday = checkForSpecialEvent()
 
     url = 'https://www.bibleserver.com/LUT/' + lesson
     title = theme + ' - ' + 'Gottesdienst am ' + sunday[0]
@@ -50,7 +49,7 @@ def createVideoContent():
 
 def gatherThumbnailInfo(saveThumbnail:bool):
     """Gahter all required information to create a thumbnail"""
-    sunday = checkForSpecialEvent(values)
+    sunday = checkForSpecialEvent()
 
     lesson = values['-LESSON-'].upper()
     
